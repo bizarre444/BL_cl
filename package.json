@@ -1,0 +1,11 @@
+{
+  "name": "beach-life-club",
+  "version": "0.1.0",
+  "description": "An original browser reimagining of the classic island-resort tycoon genre (no assets or code from the 2002 game).",
+  "type": "module",
+  "scripts": {
+    "start": "npx --yes serve -l 8080 .",
+    "test": "node tools/smoke.mjs"
+  },
+  "license": "MIT"
+}

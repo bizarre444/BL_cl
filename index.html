@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beach Life Club — островной курортный симулятор</title>
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+  <div id="game-root">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Верхняя панель (HUD) -->
+    <header id="hud" class="hidden">
+      <div class="hud-group hud-brand"><span class="brand-sun"></span><b id="hud-title">Beach Life Club</b></div>
+      <div class="hud-group" id="hud-cash" title="Наличные">💰 <b id="hud-cash-val">0</b></div>
+      <div class="hud-group" id="hud-rating" title="Рейтинг курорта">★★★★★<span id="hud-rating-val"></span></div>
+      <div class="hud-group" id="hud-guests" title="Гости / места">👥 <b id="hud-guests-val">0/0</b></div>
+      <div class="hud-group" id="hud-staff" title="Персонал">🧹 <b id="hud-staff-val">0</b></div>
+      <div class="hud-group" id="hud-clock"><span id="hud-weather-ico">☀️</span><b id="hud-day"></b><b id="hud-time"></b></div>
+      <div class="hud-group hud-speed">
+        <button id="spd-pause" title="Пауза (Space)">⏸</button>
+        <button id="spd-1" class="active" title="Обычная скорость">▶</button>
+        <button id="spd-2" title="Ускорение x2">▶▶</button>
+        <button id="spd-4" title="Ускорение x4">▶▶▶</button>
+      </div>
+      <div class="hud-group hud-actions">
+        <button id="btn-objectives" title="Цели">🎯</button>
+        <button id="btn-finance" title="Финансы">📊</button>
+        <button id="btn-staff-panel" title="Персонал">🧑‍💼</button>
+        <button id="btn-minimap" title="Мини-карта">🗺️</button>
+        <button id="btn-shot" title="Фото на память">📷</button>
+        <button id="btn-save" title="Сохранить">💾</button>
+        <button id="btn-load" title="Загрузить">📂</button>
+        <button id="btn-menu" title="В главное меню">🏠</button>
+        <button id="btn-lang" title="Language">EN</button>
+        <button id="btn-help" title="Помощь">❓</button>
+      </div>
+    </header>
+
+    <!-- Мини-карта -->
+    <div id="minimap-wrap" class="hidden"><canvas id="minimap" width="164" height="164"></canvas></div>
+
+    <!-- Журнал событий -->
+    <div id="log"></div>
+
+    <!-- Нижняя панель строительства -->
+    <footer id="buildbar" class="hidden">
+      <nav id="build-tabs"></nav>
+      <div id="build-items"></div>
+    </footer>
+
+    <!-- Панель выбора (информация об объекте) -->
+    <aside id="inspect" class="panel hidden"></aside>
+
+    <!-- Модальные окна -->
+    <div id="modal-backdrop" class="hidden">
+      <div id="modal" class="panel"></div>
+    </div>
+
+    <!-- Всплывающие уведомления -->
+    <div id="toasts"></div>
+  </div>
+
+  <!-- Главное меню -->
+  <div id="menu">
+    <div class="menu-inner">
+      <div class="menu-logo">
+        <div class="logo-art"><span class="sun"></span><span class="wave"></span></div>
+        <h1>BEACH&nbsp;LIFE&nbsp;CLUB</h1>
+        <p class="tagline" data-i18n="menu.tagline">Построй райский курорт. Гости сами расскажут, хорош ли он.</p>
+      </div>
+      <div id="menu-scenarios"></div>
+      <div class="menu-footer">
+        <button id="menu-continue" class="btn primary" data-i18n="menu.continue">Продолжить игру</button>
+        <button id="menu-lang" class="btn">RU / EN</button>
+      </div>
+      <p class="menu-note" data-i18n="menu.note">Переосмысление классического курортного симулятора 2002 года: полностью новый код и графика.</p>
+    </div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
