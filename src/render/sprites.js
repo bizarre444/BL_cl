@@ -462,6 +462,38 @@ const FALLBACK = (c, W, H, def) => {
   box(c, x, y, def.w * 0.8, def.h * 0.8, 24, '#cccccc', '#999999', '#777777');
 };
 
+// ---- Sign icons: instantly tell buildings apart ----
+const SIGN_ICONS = {
+  bungalow: '🛖', hotel: '🏨', luxhotel: '💎',
+  drinks: '🥤', icecream: '🍦', bbq: '🍖', cafe: '☕', beachbar: '🍹', restaurant: '🍽️',
+  loungers: '⛱️', volley: '🏐', pool: '🏊', jacuzzi: '💆', pedalo: '🚣', surf: '🏄',
+  stage: '🎤', disco: '🎧',
+  loo: '🚻', shower: '🚿', store: '🛒',
+  baywatch: '🛟', firstaid: '⛑️', cleanershack: '🧹', security: '👮', workshop: '🔧',
+};
+
+function drawSign(c, W, H, def) {
+  const ico = SIGN_ICONS[def.id];
+  if (!ico) return;
+  const x = W / 2 - 30, y = H - 30;
+  // post
+  c.fillStyle = '#7f5539';
+  c.fillRect(x - 1.5, y - 6, 3, 10);
+  // board
+  c.fillStyle = '#fff8ec';
+  c.strokeStyle = '#b08968';
+  c.lineWidth = 1.5;
+  const bw = 24, bh = 18;
+  c.beginPath();
+  c.roundRect ? c.roundRect(x - bw / 2, y - 6 - bh, bw, bh, 4) : c.rect(x - bw / 2, y - 6 - bh, bw, bh);
+  c.fill();
+  c.stroke();
+  c.font = '12px sans-serif';
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.fillText(ico, x, y - 6 - bh / 2 + 1);
+  c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+}
+
 export function getBuildingSprite(def) {
   if (cache.has(def.id)) return cache.get(def.id);
   const w = (def.w + def.h) * 32 + 80;
@@ -471,6 +503,7 @@ export function getBuildingSprite(def) {
   const c = cnv.getContext('2d');
   c.scale(SS, SS);
   (drawers[def.id] || FALLBACK)(c, w, h, def);
+  drawSign(c, w, h, def);
   const sprite = { canvas: cnv, w, h };
   cache.set(def.id, sprite);
   return sprite;

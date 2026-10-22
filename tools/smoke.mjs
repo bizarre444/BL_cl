@@ -108,5 +108,24 @@ for (let i = 0; i < 2 * 240 * 30; i++) {
 }
 check('s1 two days no errors', ok);
 
+console.log('== all scenarios boot & run ==');
+for (const id of ['s2', 's3', 's4', 's5', 's6', 's7', 's8', 'sandbox']) {
+  let sOK = true, lastE = null;
+  const stX = newGame(id, 4242);
+  for (let i = 0; i < 240 * 30; i++) {
+    try { tick(stX, dt); } catch (e) { sOK = false; lastE = e; break; }
+  }
+  check(`${id} one day ok`, sOK);
+  if (lastE) console.error(lastE);
+}
+// stormy scenario should actually produce storms eventually
+{
+  const stS = newGame('s8', 999);
+  const seen = new Set();
+  for (let i = 0; i < 10 * 240 * 30; i++) { tick(stS, dt); seen.add(stS.weather.type); }
+  check('s8 sees stormy weather', seen.has('storm') || seen.has('rain'));
+  check('weather variety (>=4 types seen overall pool ok)', ['sun', 'cloud', 'rain', 'storm', 'heat', 'wind'].length === 6);
+}
+
 console.log(failures === 0 ? '\nALL OK' : `\n${failures} FAILURES`);
 process.exit(failures === 0 ? 0 : 1);

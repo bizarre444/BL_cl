@@ -34,6 +34,7 @@ export function makeRenderer(canvas, minimapCanvas) {
 
     const n = state.map.size;
     const time = tReal;
+    const windK = state.weather.type === 'wind' ? 2.6 : state.weather.type === 'storm' ? 2.0 : 1;
 
     // --- ocean background ---
     const og = ctx.createLinearGradient(0, 0, 0, H);
@@ -158,7 +159,7 @@ export function makeRenderer(canvas, minimapCanvas) {
     for (const d of drawables) {
       switch (d.kind) {
         case 'building': drawBuilding(ctx, camApi, d.b, state, time); break;
-        case 'palm': drawPalm(ctx, camApi, d.p, time); break;
+        case 'palm': drawPalm(ctx, camApi, d.p, time, windK); break;
         case 'rock': drawRock(ctx, camApi, d.r); break;
         case 'litter': drawLitter(ctx, camApi, d.l); break;
         case 'guest': {
@@ -241,6 +242,40 @@ export function makeRenderer(canvas, minimapCanvas) {
     if (w === 'cloud') {
       ctx.fillStyle = 'rgba(200,210,220,0.13)';
       ctx.fillRect(0, 0, W, H);
+    } else if (w === 'heat') {
+      // scorched warm shimmer + sun glare
+      ctx.fillStyle = 'rgba(255,140,40,0.10)';
+      ctx.fillRect(0, 0, W, H);
+      const gx = W * 0.78, gy = H * 0.16;
+      const g = ctx.createRadialGradient(gx, gy, 8, gx, gy, 300);
+      g.addColorStop(0, 'rgba(255,240,180,0.5)');
+      g.addColorStop(1, 'rgba(255,240,180,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(gx - 300, gy - 300, 600, 600);
+      ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let i = 0; i < 26; i++) {
+        const sx = (Math.sin(i * 513.3) * 0.5 + 0.5) * W;
+        const sy = ((time * 26 + i * 211) % (H + 30)) - 15;
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(sx + 10, sy + 3);
+      }
+      ctx.stroke();
+    } else if (w === 'wind') {
+      ctx.fillStyle = 'rgba(190,205,215,0.10)';
+      ctx.fillRect(0, 0, W, H);
+      // gusts: fast horizontal streaks
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let i = 0; i < 46; i++) {
+        const sy = (Math.sin(i * 771.7) * 0.5 + 0.5) * H;
+        const sx = ((time * (500 + (i % 5) * 120) + i * 467) % (W + 240)) - 120;
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(sx + 60 + (i % 7) * 10, sy - 4);
+      }
+      ctx.stroke();
     } else if (w === 'rain' || w === 'storm') {
       const dark = w === 'storm' ? 0.38 : 0.22;
       ctx.fillStyle = `rgba(30,40,60,${dark})`;
@@ -312,9 +347,9 @@ export function makeRenderer(canvas, minimapCanvas) {
     }
   }
 
-  function drawPalm(ctx, camApi, p, time) {
+  function drawPalm(ctx, camApi, p, time, windK) {
     const { cam, tileToScreen } = camApi;
-    const sway = Math.sin(time * 1.1 + p.phase) * 0.06;
+    const sway = Math.sin(time * (windK > 1 ? 2.2 : 1.1) + p.phase) * (0.06 * windK);
     const s = tileToScreen(p.x, p.y, 0);
     const z = cam.zoom * p.scale;
     ctx.save();

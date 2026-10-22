@@ -52,6 +52,91 @@ export const SCENARIOS = [
     ],
   },
   {
+    id: 's4', diff: 2,
+    name: { ru: 'Серф-пляж', en: 'Surf Beach' },
+    desc: {
+      ru: 'Волны здесь знаменитые — но пока ничьи. Постройте прокат, зазовите спортсменов и сделайте из дикого пляжа мекку сёрфинга.',
+      en: 'The waves here are famous — but still unclaimed. Open a hire shack, pull in the sporty crowd and turn a wild beach into a surf mecca.',
+    },
+    cash: 38000,
+    days: 16,
+    unlocks: ['bungalow', 'hotel', 'drinks', 'icecream', 'bbq', 'cafe', 'loo', 'shower', 'cleanershack', 'loungers', 'volley', 'pedalo', 'surf', 'baywatch', 'firstaid', 'workshop', 'palm', 'flowerbed', 'lamp', 'store'],
+    objectives: [
+      { key: 'build', target: 'surf', label: { ru: 'Открыть прокат сёрфов', en: 'Open the surf hire' } },
+      { key: 'build', target: 'pedalo', label: { ru: 'Открыть прокат водных велосипедов', en: 'Open the pedalo hire' } },
+      { key: 'rating', target: 3, label: { ru: 'Рейтинг ≥ 3★', en: 'Rating ≥ 3★' } },
+      { key: 'guests', target: 25, label: { ru: '25 гостей одновременно', en: '25 guests at once' } },
+    ],
+  },
+  {
+    id: 's5', diff: 2,
+    name: { ru: 'Семейный отдых', en: 'Family Resort' },
+    desc: {
+      ru: 'Семьи с детьми — самые требовательные гости: бассейн, мороженое, медпункт и ни одного несчастного случая.',
+      en: 'Families are the pickiest guests: a pool, ice cream, a first-aid post — and not a single accident.',
+    },
+    cash: 42000,
+    days: 18,
+    unlocks: ['bungalow', 'hotel', 'drinks', 'icecream', 'bbq', 'cafe', 'loo', 'shower', 'cleanershack', 'loungers', 'volley', 'pool', 'jacuzzi', 'pedalo', 'baywatch', 'firstaid', 'store', 'stage', 'security', 'workshop', 'palm', 'flowerbed', 'lamp'],
+    objectives: [
+      { key: 'build', target: 'pool', label: { ru: 'Построить бассейн', en: 'Build the pool' } },
+      { key: 'build', target: 'firstaid', label: { ru: 'Открыть медпункт', en: 'Open the first-aid post' } },
+      { key: 'rating', target: 3.5, label: { ru: 'Рейтинг ≥ 3.5★', en: 'Rating ≥ 3.5★' } },
+      { key: 'nodrown', target: 1, label: { ru: 'Никто не утонул', en: 'Nobody drowns' } },
+    ],
+  },
+  {
+    id: 's6', diff: 3,
+    name: { ru: 'Ночная жизнь', en: 'Night Life' },
+    desc: {
+      ru: 'Днём тихо, ночью — громко. Тусовщики ждут сцену, бар и дискотеку. Охрана обязательна: веселье не должно заканчиваться дракой.',
+      en: 'Quiet by day, loud by night. Party animals want a stage, a bar and a disco. Security is a must: fun must not end in a brawl.',
+    },
+    cash: 52000,
+    days: 20,
+    unlocks: null,
+    objectives: [
+      { key: 'build', target: 'stage', label: { ru: 'Построить сцену', en: 'Build the stage' } },
+      { key: 'build', target: 'disco', label: { ru: 'Построить дискотеку', en: 'Build the disco' } },
+      { key: 'guests', target: 45, label: { ru: '45 гостей одновременно', en: '45 guests at once' } },
+      { key: 'rating', target: 3.5, label: { ru: 'Рейтинг ≥ 3.5★', en: 'Rating ≥ 3.5★' } },
+    ],
+  },
+  {
+    id: 's7', diff: 3,
+    name: { ru: 'Роскошь и покой', en: 'Luxury & Quiet' },
+    desc: {
+      ru: 'Взыскательные тихони платят за безупречность: люкс-отель, ресторан, джакузи — и ни шума, ни грязи.',
+      en: 'Demanding quiet types pay for perfection: a luxury hotel, a restaurant, a jacuzzi — and no noise, no dirt.',
+    },
+    cash: 70000,
+    days: 24,
+    unlocks: null,
+    objectives: [
+      { key: 'build', target: 'luxhotel', label: { ru: 'Построить люкс-отель', en: 'Build the luxury hotel' } },
+      { key: 'build', target: 'restaurant', label: { ru: 'Построить ресторан', en: 'Build the restaurant' } },
+      { key: 'build', target: 'jacuzzi', label: { ru: 'Поставить джакузи', en: 'Install a jacuzzi' } },
+      { key: 'rating', target: 4, label: { ru: 'Рейтинг ≥ 4★', en: 'Rating ≥ 4★' } },
+    ],
+  },
+  {
+    id: 's8', diff: 3,
+    name: { ru: 'Сезон штормов', en: 'Storm Season' },
+    desc: {
+      ru: 'Синоптики не врут: самый шквалистый сезон за десятилетие. Удержите рейтинг и кассу между штормами — и не дайте курорту утонуть в расходах.',
+      en: 'The forecasters are not lying: the stormiest season in a decade. Keep the rating and the cash afloat between storms — and don\'t let the resort drown in costs.',
+    },
+    cash: 55000,
+    days: 22,
+    unlocks: null,
+    stormy: true,
+    objectives: [
+      { key: 'rating', target: 3.5, label: { ru: 'Рейтинг ≥ 3.5★', en: 'Rating ≥ 3.5★' } },
+      { key: 'cash', target: 60000, label: { ru: 'Касса ≥ $60 000', en: 'Cash ≥ $60,000' } },
+      { key: 'served', target: 120, label: { ru: 'Обслужить 120 гостей', en: 'Serve 120 guests' } },
+    ],
+  },
+  {
     id: 'sandbox', sandbox: true, diff: 0,
     name: { ru: 'Песочница', en: 'Sandbox' },
     desc: {
@@ -84,6 +169,7 @@ export function evalObjectives(scenario, state) {
       case 'cash': value = state.econ.cash; break;
       case 'guests': value = state.peakGuests; break;
       case 'build': value = state.bs.buildings.some(b => b.id === obj.target) ? 1 : 0; break;
+      case 'nodrown': value = state.drownings === 0 ? 1 : 0; break;
     }
     done = value >= obj.target;
     return { obj, value, done };

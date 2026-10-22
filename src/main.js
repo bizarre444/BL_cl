@@ -11,6 +11,7 @@ import { BUILDING_BY_ID } from './game/catalog.js';
 import { saveGame, loadGame, hasSave } from './core/save.js';
 import { bus } from './core/bus.js';
 import { setLang, getLang, L, t as i18nT } from './core/i18n.js';
+import { initAudio } from './core/audio.js';
 import { tileAt, WATER } from './world/map.js';
 
 const $ = (id) => document.getElementById(id);
@@ -131,7 +132,7 @@ function stopGame() {
 // ---------------- Actions bridge for UI ----------------
 const actions = {
   getState: () => state,
-  build: (def, tile) => { if (state) tryBuild(state, def, tile.x, tile.y); },
+  build: (def, tile) => { if (state) return tryBuild(state, def, tile.x, tile.y); },
   demolish: (b) => { if (state) tryDemolish(state, b); },
   hire: (role) => { if (state) hire(state, role); },
   fire: (role) => { if (state) fire(state, role); },
@@ -234,10 +235,9 @@ canvas.addEventListener('pointermove', (e) => {
   if (mouse.down && camApi) {
     const dx = e.clientX - mouse.downX, dy = e.clientY - mouse.downY;
     if (Math.hypot(dx, dy) > 6) mouse.dragged = true;
-    if (mouse.dragged && mouse.button === 0 && (!ui || ui.tool === 'select')) {
-      camApi.pan(-(e.movementX || 0), -(e.movementY || 0));
-    } else if (mouse.dragged && mouse.button === 2) {
-      camApi.pan(-(e.movementX || 0), -(e.movementY || 0));
+    if (mouse.dragged && (mouse.button === 0 && (!ui || ui.tool === 'select') || mouse.button === 2)) {
+      // damped 1:0.65 mapping — raw movementX feels twitchy
+      camApi.pan(-(e.movementX || 0) * 0.65, -(e.movementY || 0) * 0.65);
     }
   }
   if (camApi) mouse.tile = camApi.screenToTile(mouse.x, mouse.y);
@@ -288,7 +288,7 @@ window.addEventListener('keyup', (e) => keys.delete(e.code));
 
 setInterval(() => {
   if (!state || !camApi) return;
-  const k = 14;
+  const k = 7; // px per tick (~210 px/s) — calm camera
   let dx = 0, dy = 0;
   if (keys.has('KeyW') || keys.has('ArrowUp')) dy -= 1;
   if (keys.has('KeyS') || keys.has('ArrowDown')) dy += 1;
@@ -317,3 +317,8 @@ bus.on('day:closed', () => {
 // boot
 buildMenu();
 resize();
+
+// audio context must start after a user gesture (autoplay policy)
+const initAudioOnce = () => { initAudio(); window.removeEventListener('pointerdown', initAudioOnce); window.removeEventListener('keydown', initAudioOnce); };
+window.addEventListener('pointerdown', initAudioOnce);
+window.addEventListener('keydown', initAudioOnce);

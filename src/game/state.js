@@ -29,7 +29,7 @@ export function newGame(scenarioId, seed = Date.now() % 100000) {
     bs,
     staff: makeStaffSystem(),
     econ: makeEconomy(scen.cash),
-    weather: makeWeather(),
+    weather: makeWeather(scen.stormy ? { storm: 26, rain: 12 } : null),
     hazard: { shark: false, sharkT: 0, jellyT: 0 },
     rating: makeRating(),
     guests: [],
@@ -241,7 +241,8 @@ export function deserialize(data) {
   state.day = data.day;
   state.hour = data.hour;
   state.econ = data.econ;
-  state.weather = { type: data.weather.type, hoursLeft: data.weather.hoursLeft };
+  state.weather.type = data.weather.type;
+  state.weather.hoursLeft = data.weather.hoursLeft;
   state.hazard = data.hazard;
   state.rating = data.rating;
   state.servedTotal = data.servedTotal || 0;

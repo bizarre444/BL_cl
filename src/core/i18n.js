@@ -28,6 +28,8 @@ const dict = {
   'w.cloud': { ru: 'Облачно', en: 'Cloudy' },
   'w.rain': { ru: 'Дождь', en: 'Rain' },
   'w.storm': { ru: 'Шторм', en: 'Storm' },
+  'w.heat': { ru: 'Жара', en: 'Heatwave' },
+  'w.wind': { ru: 'Ветер', en: 'Windy' },
   // Build / tools
   'tool.select': { ru: 'Осмотр', en: 'Inspect' },
   'tool.place': { ru: 'Постройка', en: 'Build' },

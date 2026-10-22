@@ -41,9 +41,10 @@ export function spawnGuest(rng, archId, tier) {
   };
 }
 
-function needsDecay(g, dtHours, sleeping, swimming) {
+function needsDecay(g, dtHours, sleeping, swimming, weatherType) {
   for (const k of NEED_KEYS) {
     let d = DECAY[k];
+    if (k === 'thirst') d *= Weather.thirstMul({ type: weatherType || 'sun' });
     if (sleeping) d = k === 'energy' ? -26 : d * 0.25;
     if (swimming && k === 'hygiene') d = -30;
     g.needs[k] = clamp(g.needs[k] - d * dtHours, 0, 100);
@@ -118,6 +119,7 @@ function venueTile(b) {
 
 export function updateGuests(state, dt, dtHours) {
   const rng = state.rng;
+  const wtype = state.weather.type;
   const beachOpen = Weather.beachOpen(state.weather, state.hazard);
 
   for (const g of state.guests) {
@@ -129,7 +131,7 @@ export function updateGuests(state, dt, dtHours) {
       case 'ferry': break; // placed by arriveGuests()
 
       case 'dockWait': {
-        needsDecay(g, dtHours, false, false);
+        needsDecay(g, dtHours, false, false, wtype);
         g.mood = clamp(g.mood - dtHours * 1.2, 0, 100);
         const room = findRoom(state, a);
         if (room) {
@@ -138,6 +140,7 @@ export function updateGuests(state, dt, dtHours) {
           const fee = Math.min(Math.round(room.def.roomFee * (0.9 + rng() * 0.2)), g.money);
           g.money -= fee; g.spent += fee;
           state.economyEarn(fee);
+          bus.emit('sfx:cash');
           g.state = 'idle';
         } else if (state.hour - g.waitingSince > 3.5) {
           leaveAngry(state, g);
@@ -150,14 +153,14 @@ export function updateGuests(state, dt, dtHours) {
       case 'use': useTick(state, g, a, dtHours); break;
 
       case 'room': {
-        needsDecay(g, dtHours, true, false);
+        needsDecay(g, dtHours, true, false, wtype);
         g.mood = clamp(g.mood + dtHours * 2.2, 0, 100);
         if (state.hour >= 7 && state.hour < 21 && g.needs.energy > 78) g.state = 'idle';
         break;
       }
 
       case 'swim': {
-        needsDecay(g, dtHours, false, true);
+        needsDecay(g, dtHours, false, true, wtype);
         g.needs.fun = clamp(g.needs.fun + dtHours * 7, 0, 100);
         g.mood = clamp(g.mood + dtHours * (state.weather.type === 'sun' ? 1.4 : 0.2), 0, 100);
         const risk = Weather.swimRisk(state.weather) * (g.drunk > 0 ? 2.2 : 1) * (a.id === 'family' ? 1.3 : 1);
@@ -184,7 +187,10 @@ export function updateGuests(state, dt, dtHours) {
     if (g.state !== 'room' && g.state !== 'gone') {
       let dm = 0.15;
       const w = state.weather.type;
-      if (w === 'storm') dm -= 1.6; else if (w === 'rain') dm -= 0.7;
+      if (w === 'storm') dm -= 1.6;
+      else if (w === 'rain') dm -= 0.7;
+      else if (w === 'wind') dm -= 0.4;
+      else if (w === 'heat' && state.hour > 11 && state.hour < 16) dm -= 0.5;
       if (worstNeed(g).value < 12) dm -= 0.9;
       if (state.litter.length > 12) dm -= 0.4;
       if (a.hatesNoise && state.noiseLevel > 0) dm -= 0.5;
@@ -211,7 +217,8 @@ function findRoom(state, a) {
 }
 
 function decide(state, g, a, dtHours) {
-  needsDecay(g, dtHours, false, false);
+  const wtype = state.weather.type;
+  needsDecay(g, dtHours, false, false, wtype);
   const hour = state.hour;
 
   if (hour >= 22 || hour < 6.5) {
@@ -265,7 +272,8 @@ function startWalkTo(state, g, building, after) {
 }
 
 function walkStep(state, g, a, dtHours) {
-  needsDecay(g, dtHours, false, false);
+  const wtype = state.weather.type;
+  needsDecay(g, dtHours, false, false, wtype);
   const stepLen = WALK_TILES_PER_HOUR * a.walkSpeed * dtHours;
 
   if (!g.path || g.pathI >= g.path.length) {
@@ -323,6 +331,7 @@ function enterVenue(state, g, a, b) {
     const paid = Math.min(price, g.money);
     g.money -= paid; g.spent += paid;
     state.economyEarn(paid);
+    bus.emit('sfx:cash');
   }
   if ((b.def.litter || 0) > 0 && state.rng.chance(Math.min(0.85, 0.35 + b.def.litter * 0.15))) dropLitter(state, g);
   if (b.def.drink && state.rng.chance(a.dragged ?? a.drinky ?? 0)) {
@@ -335,7 +344,8 @@ function enterVenue(state, g, a, b) {
 }
 
 function useTick(state, g, a, dtHours) {
-  needsDecay(g, dtHours, false, false);
+  const wtype = state.weather.type;
+  needsDecay(g, dtHours, false, false, wtype);
   const b = g.useVenue;
   if (!b) { g.state = 'idle'; return; }
 

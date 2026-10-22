@@ -137,7 +137,8 @@ export function tileAt(map, x, y) {
 export function isLand(map, x, y) { return tileAt(map, x, y) !== WATER; }
 export function isBuildableTerrain(map, x, y) {
   const t = tileAt(map, x, y);
-  return t === SAND || t === GRASS;
+  // ROCK is high ground — buildable (grey cliffs on the map are just elevation)
+  return t === SAND || t === GRASS || t === ROCK;
 }
 export function touchesWater(map, x, y, w, h) {
   for (let dy = -1; dy <= h; dy++) {

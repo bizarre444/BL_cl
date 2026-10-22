@@ -9,8 +9,9 @@ import { money } from '../game/economy.js';
 import { starsText } from '../game/rating.js';
 import { getBuildingThumb } from './sprites.js';
 import { canHire } from '../game/staff.js';
+import { sfxClick, setMuted, isMuted } from '../core/audio.js';
 
-const WEATHER_ICO = { sun: '☀️', cloud: '⛅', rain: '🌧️', storm: '⛈️' };
+const WEATHER_ICO = { sun: '☀️', cloud: '⛅', rain: '🌧️', storm: '⛈️', heat: '🥵', wind: '🌬️' };
 
 export function makeUI(actions) {
   // actions: { getState, build(def,tile), demolish(b), hire(role), fire(role),
@@ -362,6 +363,15 @@ export function makeUI(actions) {
     ui.minimapOn = !ui.minimapOn;
     $('minimap-wrap').classList.toggle('hidden', !ui.minimapOn);
   };
+  const soundBtn = $('btn-sound');
+  const syncSoundBtn = () => { soundBtn.textContent = isMuted() ? '🔇' : '🔊'; };
+  syncSoundBtn();
+  soundBtn.onclick = () => { setMuted(!isMuted()); syncSoundBtn(); };
+
+  // soft click on every button
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('button')) sfxClick();
+  });
 
   // keyboard speed shortcuts handled in main.js; expose openModal for help-on-start
   ui.openModal = openModal;
